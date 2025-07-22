@@ -1,0 +1,110 @@
+.register-container {
+  min-height: 100vh;
+  background: #101c3a;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.register-title {
+  color: #ff6b00;
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 2.2rem;
+  letter-spacing: 1px;
+  text-align: center;
+  width: 100%;
+  max-width: 400px;
+}
+.register-form {
+  background: linear-gradient(135deg, #181c3a 80%, #a259ff 100%);
+  border-radius: 24px;
+  padding: 2.5rem 2rem 2rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 320px;
+  max-width: 400px;
+  width: 100%;
+}
+.register-form input {
+  background: #232c4e;
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  outline: none;
+  transition: box-shadow 0.2s, background 0.2s;
+  width: 100%;
+}
+.register-form input:focus {
+  background: #283366;
+  box-shadow: 0 0 0 2px #ff6b00;
+}
+.register-form button[type="submit"] {
+  background: linear-gradient(90deg, #ff6b00 0%, #ff9800 100%);
+  color: #fff;
+  border: none;
+  padding: 14px 0;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  width: 100%;
+  margin-bottom: 1.2rem;
+  box-shadow: 0 2px 12px rgba(255, 107, 0, 0.13);
+  transition: background 0.2s;
+}
+.register-form button[type="submit"]:hover {
+  background: linear-gradient(90deg, #ff9800 0%, #ff6b00 100%);
+}
+.register-login {
+  color: #36cfff;
+  font-weight: 700;
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 1.08rem;
+  width: 100%;
+}
+.register-login a {
+  color: #ff3c7e;
+  text-decoration: underline;
+  cursor: pointer;
+  margin-left: 0.3rem;
+}
+.register-login a:hover {
+  color: #ff6b00;
+}
+@media (max-width: 600px) {
+  .register-container {
+    padding: 0;
+    min-height: 100vh;
+    justify-content: flex-start;
+  }
+  .register-title {
+    font-size: 1.3rem;
+    max-width: 95vw;
+    margin-bottom: 1.2rem;
+  }
+  .register-form {
+    max-width: 95vw;
+    min-width: 0;
+    padding: 1.2rem 0.5rem;
+    border-radius: 14px;
+  }
+  .register-form input {
+    font-size: 0.98rem;
+    padding: 10px 10px;
+  }
+  .register-form button[type="submit"] {
+    font-size: 1rem;
+    padding: 10px 0;
+    border-radius: 10px;
+  }
+  .register-login {
+    font-size: 0.98rem;
+    margin-top: 1rem;
+  }
+} 
