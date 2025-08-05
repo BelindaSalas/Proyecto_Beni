@@ -1,5 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './Transactions.css';
+import {crearIngreso, getIngresosByUsuarioId} from "../services/ingreso.service";
+import {crearGasto, getGastosByUsuarioId} from "../services/gasto.service";
+import {MySwal} from "../constants/mySwal";
 import Modal from './Modal';
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
@@ -34,26 +37,59 @@ const Transactions = ({ user }) => {
   const loadedUser = useRef(null);
   const loadedFlag = useRef(false);
 
+  const getData = async () => {
+    try {
+      const [ingresos, gastos] = await Promise.all([getIngresosByUsuarioId(), getGastosByUsuarioId()]);
+      console.log(ingresos, gastos);
+      const ingresosArray = Array.from(ingresos).map(ingreso => {
+        return {
+          name: ingreso.descripcion,
+          date: ingreso.fecha.split("T")[0],
+          amount: `+${ingreso.monto}`,
+          type: "income"
+        }
+      })
+
+      const gastosArray = Array.from(gastos).map(gasto => {
+        return {
+          name: gasto.descripcion,
+          date: gasto.fecha.split("T")[0],
+          amount: `-${gasto.monto}`,
+          type: "expense"
+        }
+      })
+
+      setTransactions([...ingresosArray, ...gastosArray]);
+    } catch (error) {
+      console.error("Error al obtener los datos", error);
+    }
+  }
+
+
+
   // Load transactions for the current user only once per user
   useEffect(() => {
-    if (!user || !user.email) return;
-    const key = getKey(user.email);
-    const saved = localStorage.getItem(key);
-    if (!loadedFlag.current || loadedUser.current !== user.email) {
-      if (saved) {
-        setTransactions(JSON.parse(saved));
-      } else {
-        setTransactions(defaultTransactions);
-        localStorage.setItem(key, JSON.stringify(defaultTransactions));
-      }
-      loadedUser.current = user.email;
-      loadedFlag.current = true;
-    }
-  }, [user && user.email]);
+    // if (!user || !user.email) return;
+    // const key = getKey(user.email);
+    // const saved = localStorage.getItem(key);
+    // if (!loadedFlag.current || loadedUser.current !== user.email) {
+    //   if (saved) {
+    //     setTransactions(JSON.parse(saved));
+    //   } else {
+    //     setTransactions(defaultTransactions);
+    //     localStorage.setItem(key, JSON.stringify(defaultTransactions));
+    //   }
+    //   loadedUser.current = user.email;
+    //   loadedFlag.current = true;
+    // }
+
+    getData();
+
+  }, [/*user && user.email*/]);
 
   // Save transactions for the current user
   useEffect(() => {
-    if (!user || !user.email) return;
+    // if (!user || !user.email) return;
     if (!loadedFlag.current || loadedUser.current !== user.email) return; // Only save if loaded
     const key = getKey(user.email);
     localStorage.setItem(key, JSON.stringify(transactions));
@@ -70,7 +106,7 @@ const Transactions = ({ user }) => {
     setForm(f => ({ ...f, [name]: value }));
   };
 
-  const handleSubmit = e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name || !form.date || !form.amount) {
       alert('Completa todos los campos');
@@ -80,11 +116,84 @@ const Transactions = ({ user }) => {
     if (!amount.startsWith('+') && !amount.startsWith('-')) {
       amount = (form.type === 'income' ? '+' : '-') + amount;
     }
-    setTransactions([
-      { ...form, amount, type: form.type },
-      ...transactions,
-    ]);
-    setModalOpen(false);
+    // setTransactions([
+    //   { ...form, amount, type: form.type },
+    //   ...transactions,
+    // ]);
+
+    const data = {
+      monto: parseFloat(form.amount),
+      descripcion: form.name,
+      fecha: form.date
+    }
+
+    console.log(data);
+    console.log(form.type);
+
+    if(form.type == "income") {
+          // llamada a la API
+        try {
+      const results = await crearIngreso(data);
+      console.log(results);
+
+      if (results.status !== 200) {
+        await MySwal.fire({
+          title: 'Opps...',
+          text: 'Algo salió mal.',
+          icon: 'error',
+        });
+        return;
+      }
+
+      await MySwal.fire({
+        title: 'Ingreso Guardado Exitosamente',
+        icon: 'success',
+      });
+
+      setModalOpen(false);
+
+      window.location.reload();
+      } catch (error) {
+          await MySwal.fire({
+            title: 'Error',
+            text: 'Error al crear el ingreso. Intenta más tarde.',
+            icon: 'error',
+          });
+          console.error(error);
+    }
+    } else if(form.type == "expense") {
+        // llamada a la API
+        try {
+      const results = await crearGasto(data);
+      console.log(results);
+
+      if (results.status !== 200) {
+        await MySwal.fire({
+          title: 'Opps...',
+          text: 'Algo salió mal.',
+          icon: 'error',
+        });
+        return;
+      }
+
+      await MySwal.fire({
+        title: 'Gasto Guardado Exitosamente',
+        icon: 'success',
+      });
+      setModalOpen(false);
+
+
+      window.location.reload();
+      } catch (error) {
+          await MySwal.fire({
+            title: 'Error',
+            text: 'Error al crear el gasto. Intenta más tarde.',
+            icon: 'error',
+          });
+          console.error(error);
+    }
+    }
+    // setModalOpen(false);
   };
 
   // --- GRAFICA LINEAL DOBLE EJE Y ---
@@ -125,7 +234,7 @@ const Transactions = ({ user }) => {
         <form onSubmit={handleSubmit} className="modal-form">
           <input name="name" type="text" placeholder="Descripcion" value={form.name} onChange={handleChange} required />
           <input name="date" type="date" value={form.date} onChange={handleChange} required />
-          <input name="amount" type="text" placeholder="Cantidad $$$" value={form.amount} onChange={handleChange} required />
+          <input name="amount" type="number" placeholder="Cantidad $$$" value={form.amount} onChange={handleChange} required />
           <select name="type" value={form.type} onChange={handleChange} required>
             <option value="income">Ingreso</option>
             <option value="expense">Gasto</option>

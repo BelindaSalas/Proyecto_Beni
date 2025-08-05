@@ -5,6 +5,9 @@ import Register from './components/Register'
 import Transactions from './components/Transactions'
 import Settings from './components/Settings'
 import Budget from './components/Budget'
+import {create} from "./services/user.service";
+import {login} from "./services/auth.service";
+import {MySwal} from "./constants/mySwal";
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login')
@@ -13,68 +16,78 @@ function App() {
   const [registeredUsers, setRegisteredUsers] = useState([])
 
   // Cargar usuarios registrados desde localStorage al iniciar
-  useEffect(() => {
-    const savedUsers = localStorage.getItem('registeredUsers')
-    if (savedUsers) {
-      setRegisteredUsers(JSON.parse(savedUsers))
-    }
-  }, [])
+  // useEffect(() => {
+  //   const savedUsers = localStorage.getItem('registeredUsers')
+  //   if (savedUsers) {
+  //     setRegisteredUsers(JSON.parse(savedUsers))
+  //   }
+  // }, [])
 
   // Guardar usuarios en localStorage cada vez que cambien
-  useEffect(() => {
-    localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers))
-  }, [registeredUsers])
+  // useEffect(() => {
+  //   localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers))
+  // }, [registeredUsers])
 
-  const handleLogin = (userData) => {
+  const handleLogin = async (userData) => {
     console.log('Attempting login with:', userData)
-    console.log('Registered users:', registeredUsers)
-    
-    // Verificar si el usuario está registrado
-    const userExists = registeredUsers.find(user => user.email === userData.email)
-    
-    if (!userExists) {
-      alert('Debes registrarte primero antes de iniciar sesión')
-      return
+  
+    try {
+      const results = await login(userData);
+
+      if (results.status !== 200) {
+        await MySwal.fire({
+          title: 'Opps...',
+          text: 'Algo salió mal, revise sus credenciales',
+          icon: 'error',
+        });
+        return;
+      }
+
+      setCurrentPage('transactions');
+      } catch (error) {
+          await MySwal.fire({
+            title: 'Error',
+            text: 'Error al iniciar sesión. Intenta más tarde.',
+            icon: 'error',
+          });
+          console.error(error);
     }
-    
-    // Verificar que la contraseña coincida
-    if (userExists.password !== userData.password) {
-      alert('Contraseña incorrecta')
-      return
-    }
-    
+
+  
     console.log('Login successful!')
     setIsLoggedIn(true)
-    setUser(userExists)
-    setCurrentPage('transactions')
   }
 
-  const handleRegister = (userData) => {
-    console.log('Attempting registration with:', userData)
-    console.log('Current registered users:', registeredUsers)
-    
-    // Verificar si el usuario ya existe
-    const userExists = registeredUsers.find(user => user.email === userData.email)
-    
-    if (userExists) {
-      alert('Este email ya está registrado')
-      return
+  const handleRegister = async (userData) => {
+    console.log('Attempting registration with:', userData);
+
+    try {
+      const results = await create(userData);
+
+      if (results.status !== 200) {
+        await MySwal.fire({
+          title: 'Opps...',
+          text: 'Algo salió mal',
+          icon: 'error',
+        });
+        return;
+      }
+
+      await MySwal.fire({
+        title: 'Usuario Guardado Exitosamente',
+        icon: 'success',
+      });
+
+      setCurrentPage('login');
+      } catch (error) {
+          await MySwal.fire({
+            title: 'Error',
+            text: 'No se pudo guardar el usuario. Intenta más tarde.',
+            icon: 'error',
+          });
+          console.error(error);
     }
-    
-    // Agregar el nuevo usuario a la lista
-    const newUser = {
-      name: userData.name,
-      email: userData.email,
-      password: userData.password
-    }
-    
-    console.log('Adding new user:', newUser)
-    setRegisteredUsers(prevUsers => [...prevUsers, newUser])
-    
-    // Mostrar mensaje de éxito y redirigir al login
-    alert('¡Registro exitoso! Ahora puedes iniciar sesión.')
-    setCurrentPage('login')
-    console.log('Registration successful! Redirecting to login...')
+    // console.log('Registration successful! Redirecting to login...')
   }
 
   const handleLogout = () => {

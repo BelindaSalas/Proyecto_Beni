@@ -8,15 +8,20 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
     password: ''
   });
 
+  const [btnDisabled, setBtnDisabled] = useState(false);
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
     // Aquí normalmente harías una llamada a la API
     // Por ahora simulamos un login exitoso
+
+    setBtnDisabled(true);
     onLogin({
       email: formData.email,
-      password: formData.password,
-      name: 'Usuario Demo'
+      password: formData.password
     });
+    setBtnDisabled(false);
   };
 
   const handleChange = (e) => {
@@ -34,7 +39,7 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
       <input
         type="text"
           name="email"
-        placeholder="Ingresa tu usuario o correo electronico"
+        placeholder="Ingresa correo electrónico"
         className="input-field"
           value={formData.email}
           onChange={handleChange}
@@ -50,7 +55,9 @@ const Login = ({ onLogin, onSwitchToRegister }) => {
           required
       />
 
-        <button className="login-button" onClick={handleSubmit}>Iniciar Sesión</button>
+        <button className="login-button" onClick={handleSubmit} disabled={btnDisabled}>
+          {btnDisabled ? <LuLoaderCircle className='spinner' /> : <span>Iniciar Sesión</span>}
+        </button>
 
         <a href="#" className="create-account-link" onClick={onSwitchToRegister}>
         Crear cuenta nueva

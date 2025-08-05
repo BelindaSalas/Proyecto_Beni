@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import {LuLoaderCircle} from "react-icons/lu";
 import './Register.css';
+
 
 const Register = ({ onRegister, onSwitchToLogin }) => {
   const [formData, setFormData] = useState({
@@ -8,6 +10,8 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
     password: '',
     confirmPassword: ''
   });
+
+  const [btnDisabled, setBtnDisabled] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -28,13 +32,20 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
       return;
     }
     
-    // Aquí normalmente harías una llamada a la API
-    // Por ahora simulamos un registro exitoso
-    onRegister({
-      name: formData.name,
+    // Desestructurar campo name del formulario y crear un objeto con los datos a
+    // enviar a la API
+    const [nombre, apellidos] = formData.name.split(" ");
+
+    const data = {
       email: formData.email,
-      password: formData.password
-    });
+      password: formData.password,
+      nombre: nombre,
+      apellidos: apellidos,
+    }
+
+    setBtnDisabled(true);
+    onRegister(data);
+    setBtnDisabled(false);
   };
 
   const handleChange = (e) => {
@@ -82,7 +93,9 @@ const Register = ({ onRegister, onSwitchToLogin }) => {
           required
         />
 
-        <button type="submit">Registrarse</button>
+        <button type="submit" disabled={btnDisabled} >
+          {btnDisabled ? <LuLoaderCircle className='spinner' /> : <span>Registrarse</span>}
+        </button>
       </form>
 
       <p className="register-login">
