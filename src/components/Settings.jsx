@@ -15,6 +15,15 @@ const Settings = ({ user, setUser, registeredUsers, setRegisteredUsers }) => {
   const [modal, setModal] = useState(null); // 'profile', 'password', '2fa'
   const [form, setForm] = useState({});
 
+  // Proteger si user no está definido
+  if (!user) {
+    return (
+      <div style={{ padding: '20px', color: 'white' }}>
+        No hay datos de usuario para mostrar configuración.
+      </div>
+    );
+  }
+
   useEffect(() => {
     const savedPrefs = localStorage.getItem(LOCAL_PREFS);
     if (savedPrefs) setPrefs(JSON.parse(savedPrefs));
@@ -26,7 +35,7 @@ const Settings = ({ user, setUser, registeredUsers, setRegisteredUsers }) => {
 
   // Editar perfil
   const openProfileModal = () => {
-    setForm({ name: user.name, email: user.email });
+    setForm({ name: user.name || '', email: user.email || '' });
     setModal('profile');
   };
   const handleProfileSave = e => {
@@ -35,7 +44,6 @@ const Settings = ({ user, setUser, registeredUsers, setRegisteredUsers }) => {
       alert('Completa todos los campos');
       return;
     }
-    // Actualizar en registeredUsers y en user
     setRegisteredUsers(users => users.map(u =>
       u.email === user.email ? { ...u, name: form.name, email: form.email } : u
     ));
@@ -115,7 +123,9 @@ const Settings = ({ user, setUser, registeredUsers, setRegisteredUsers }) => {
                 </div>
                 <div className="row">
                   <span>Autenticación de dos factores</span>
-                  <button className="orange-btn small" onClick={toggle2FA}>{user.twoFA ? 'Desactivar' : 'Activar'}</button>
+                  <button className="orange-btn small" onClick={toggle2FA}>
+                    {user.twoFA ? 'Desactivar' : 'Activar'}
+                  </button>
                 </div>
               </div>
             </section>
@@ -161,6 +171,7 @@ const Settings = ({ user, setUser, registeredUsers, setRegisteredUsers }) => {
           </main>
         </div>
       </div>
+
       {/* Modals */}
       <Modal isOpen={modal==='profile'} onClose={()=>setModal(null)} title="Editar perfil">
         <form onSubmit={handleProfileSave} className="modal-form">
@@ -181,4 +192,4 @@ const Settings = ({ user, setUser, registeredUsers, setRegisteredUsers }) => {
   );
 };
 
-export default Settings; 
+export default Settings;

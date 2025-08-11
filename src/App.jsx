@@ -1,13 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import './App.css'
 import Login from './components/Login'
 import Register from './components/Register'
 import Transactions from './components/Transactions'
 import Settings from './components/Settings'
 import Budget from './components/Budget'
-import {create} from "./services/user.service";
-import {login} from "./services/auth.service";
-import {MySwal} from "./constants/mySwal";
+import { create } from "./services/user.service";
+import { login } from "./services/auth.service";
+import { MySwal } from "./constants/mySwal";
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login')
@@ -15,22 +15,8 @@ function App() {
   const [user, setUser] = useState(null)
   const [registeredUsers, setRegisteredUsers] = useState([])
 
-  // Cargar usuarios registrados desde localStorage al iniciar
-  // useEffect(() => {
-  //   const savedUsers = localStorage.getItem('registeredUsers')
-  //   if (savedUsers) {
-  //     setRegisteredUsers(JSON.parse(savedUsers))
-  //   }
-  // }, [])
-
-  // Guardar usuarios en localStorage cada vez que cambien
-  // useEffect(() => {
-  //   localStorage.setItem('registeredUsers', JSON.stringify(registeredUsers))
-  // }, [registeredUsers])
-
   const handleLogin = async (userData) => {
     console.log('Attempting login with:', userData)
-  
     try {
       const results = await login(userData);
 
@@ -43,19 +29,25 @@ function App() {
         return;
       }
 
-      setCurrentPage('transactions');
-      } catch (error) {
-          await MySwal.fire({
-            title: 'Error',
-            text: 'Error al iniciar sesión. Intenta más tarde.',
-            icon: 'error',
-          });
-          console.error(error);
-    }
+      // Guardar usuario con valores por defecto para evitar undefined
+      const userObj = {
+        ...results.data,
+        password: results.data?.password || '',
+        twoFA: results.data?.twoFA || false
+      };
+      setUser(userObj);
 
-  
-    console.log('Login successful!')
-    setIsLoggedIn(true)
+      setIsLoggedIn(true);
+      setCurrentPage('transactions');
+
+    } catch (error) {
+      await MySwal.fire({
+        title: 'Error',
+        text: 'Error al iniciar sesión. Intenta más tarde.',
+        icon: 'error',
+      });
+      console.error(error);
+    }
   }
 
   const handleRegister = async (userData) => {
@@ -79,15 +71,14 @@ function App() {
       });
 
       setCurrentPage('login');
-      } catch (error) {
-          await MySwal.fire({
-            title: 'Error',
-            text: 'No se pudo guardar el usuario. Intenta más tarde.',
-            icon: 'error',
-          });
-          console.error(error);
+    } catch (error) {
+      await MySwal.fire({
+        title: 'Error',
+        text: 'No se pudo guardar el usuario. Intenta más tarde.',
+        icon: 'error',
+      });
+      console.error(error);
     }
-    // console.log('Registration successful! Redirecting to login...')
   }
 
   const handleLogout = () => {
@@ -100,7 +91,6 @@ function App() {
     setCurrentPage(page)
   }
 
-  // Si no está logueado, mostrar login o registro
   if (!isLoggedIn) {
     return (
       <div className="App">
@@ -119,17 +109,10 @@ function App() {
     )
   }
 
-  // Si está logueado, mostrar la aplicación principal con navbar arriba
   return (
     <div className="App">
       <nav className="top-navbar desktop-navbar">
         <div className="nav-left">
-          <button 
-            className={`nav-btn ${currentPage === 'home' ? 'active' : ''}`}
-            onClick={() => navigateTo('transactions')}
-          >
-            <span role="img" aria-label="home">🏠</span> Hogar
-          </button>
           <button 
             className={`nav-btn ${currentPage === 'transactions' ? 'active' : ''}`}
             onClick={() => navigateTo('transactions')}
@@ -158,7 +141,14 @@ function App() {
       <div className="main-content">
         {currentPage === 'transactions' && <Transactions user={user} />}
         {currentPage === 'budget' && <Budget user={user} />}
-        {currentPage === 'settings' && <Settings user={user} setUser={setUser} registeredUsers={registeredUsers} setRegisteredUsers={setRegisteredUsers} />}
+        {currentPage === 'settings' && (
+          <Settings 
+            user={user} 
+            setUser={setUser} 
+            registeredUsers={registeredUsers} 
+            setRegisteredUsers={setRegisteredUsers} 
+          />
+        )}
       </div>
     </div>
   )
