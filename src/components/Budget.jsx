@@ -119,17 +119,17 @@ const Budget = ({ user }) => {
 
   // Progreso de presupuesto
   const gastoProgreso = sumaIngresos > 0 ? Math.min(100, (sumaGastos / sumaIngresos) * 100) : 0;
-  const presupuestoColor = presupuestoDisponible >= 0 ? '#df7c0bff' : '#ff5252';
+  const presupuestoColor = presupuestoDisponible >= 0 ? '#43ea7c' : '#ff5252';  // Cambié el color para mostrar positivo cuando es ahorrado
 
   return (
     <div className="budget-container">
       <div className="main-section">
         <div className="header-row">
-          <h1 className="budget-title">Presupuesto</h1>
+          <h1 className="budget-title">Ahorro total acumulado</h1>
         </div>
         <div className="main-card">
-          <h2 className="budget-subtitle">Presupuesto total:</h2>
-          <div className="budget-amount">${budget}</div>
+          <h2 className="budget-subtitle">Ahorro total acumulado:</h2>
+          <div className="budget-amount">${totalApartado}</div>
           <div className="budget-progress-bar-bg">
             <div
               className="budget-progress-bar"
@@ -140,23 +140,8 @@ const Budget = ({ user }) => {
               }}
             ></div>
           </div>
-          <span
-            className="budget-progress-label"
-            style={{
-              color: presupuestoColor,
-              fontWeight: 600,
-              fontFamily: 'Montserrat, Arial, sans-serif'
-            }}
-          >
-            {presupuestoDisponible > 0
-              ? 'Dinero disponible para gastar'
-              : '¡Has excedido tu presupuesto!'}
-          </span>
-          <div className="budget-amount" style={{ color: presupuestoColor, fontFamily: 'Montserrat, Arial, sans-serif' }}>
-            ${presupuestoDisponible}
-          </div>
           <div style={{ color: '#bfc8e2', fontSize: '0.95rem', marginTop: 4 }}>
-            El dinero disponible se ajusta conforme gastas.
+            El dinero disponible se ajusta conforme ahorras.
           </div>
         </div>
         <div className="goals-section">
@@ -215,11 +200,6 @@ const Budget = ({ user }) => {
                       {falta > 0
                         ? `¡Vas muy bien, solo te falta $${falta} para tu meta!`
                         : '¡Meta alcanzada! 🎉'}
-                    </div>
-                    <div style={{ fontSize: '0.92rem', color: '#bfc8e2', marginTop: 2 }}>
-                      {g.saved > 0 && g.target > 0
-                        ? `Si ahorras $${g.saved} cada mes, te faltan ${Math.ceil(falta / (g.saved || 1))} meses para tu meta.`
-                        : ''}
                     </div>
                     {g.description && (
                       <div style={{ fontSize: '0.92rem', color: '#43ea7c', marginTop: 2 }}>
