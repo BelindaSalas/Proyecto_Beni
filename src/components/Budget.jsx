@@ -39,7 +39,6 @@ const Budget = ({ user }) => {
   const [goalForm, setGoalForm] = useState({ name: '', target: '', saved: '', description: '' });
   const [editGoalIdx, setEditGoalIdx] = useState(null);
 
-  // Bandera para evitar recarga múltiple de metas
   const loadedUser = useRef(null);
   const loadedFlag = useRef(false);
 
@@ -56,14 +55,12 @@ const Budget = ({ user }) => {
     }
   }, [user && user.email]);
 
-  // Guardar metas
   useEffect(() => {
     if (!user || !user.email) return;
     if (!loadedFlag.current || loadedUser.current !== user.email) return;
     localStorage.setItem(getGoalsKey(user.email), JSON.stringify(goals));
   }, [goals, user && user.email]);
 
-  // Apartados/metas
   const openGoalModal = (idx = null) => {
     if (idx !== null) {
       setGoalForm(goals[idx]);
@@ -74,6 +71,7 @@ const Budget = ({ user }) => {
     }
     setGoalModalOpen(true);
   };
+
   const closeGoalModal = () => setGoalModalOpen(false);
 
   const handleGoalChange = e => {
@@ -113,13 +111,13 @@ const Budget = ({ user }) => {
   const sumaGastos = transactions.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + Math.abs(parseAmount(tx.amount)), 0);
   const budget = sumaIngresos - sumaGastos;
 
-  // Suma de lo apartado
+  // Suma de lo apartado de todas las metas
   const totalApartado = goals.reduce((sum, g) => sum + (g.saved || 0), 0);
   const presupuestoDisponible = budget - totalApartado;
 
   // Progreso de presupuesto
   const gastoProgreso = sumaIngresos > 0 ? Math.min(100, (sumaGastos / sumaIngresos) * 100) : 0;
-  const presupuestoColor = presupuestoDisponible >= 0 ? '#43ea7c' : '#ff5252';  // Cambié el color para mostrar positivo cuando es ahorrado
+  const presupuestoColor = presupuestoDisponible >= 0 ? '#43ea7c' : '#ff5252'; // Cambié el color para mostrar positivo cuando es ahorrado
 
   return (
     <div className="budget-container">

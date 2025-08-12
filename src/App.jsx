@@ -117,13 +117,13 @@ function App() {
             className={`nav-btn ${currentPage === 'transactions' ? 'active' : ''}`}
             onClick={() => navigateTo('transactions')}
           >
-            <span role="img" aria-label="transacciones">📄</span> Ingresos
+            <span role="img" aria-label="transacciones">📊</span> Ingresos y Gastos
           </button>
           <button 
             className={`nav-btn ${currentPage === 'budget' ? 'active' : ''}`}
             onClick={() => navigateTo('budget')}
           >
-            <span role="img" aria-label="presupuesto">📊</span> Presupuesto
+            <span role="img" aria-label="presupuesto">📄</span> Ahorros
           </button>
           <button 
             className={`nav-btn ${currentPage === 'settings' ? 'active' : ''}`}

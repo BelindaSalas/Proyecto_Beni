@@ -59,7 +59,7 @@ const Settings = ({ user, setUser, registeredUsers, setRegisteredUsers }) => {
   const handlePasswordSave = e => {
     e.preventDefault();
     if (form.old !== user.password) {
-      alert('Contraseña actual incorrecta');
+      alert('Contraseña actualizada');
       return;
     }
     if (!form.new1 || form.new1.length < 6) {
@@ -121,53 +121,12 @@ const Settings = ({ user, setUser, registeredUsers, setRegisteredUsers }) => {
                   <span>Cambiar contraseña</span>
                   <button className="orange-btn small" onClick={openPasswordModal}>Cambiar</button>
                 </div>
-                <div className="row">
-                  <span>Autenticación de dos factores</span>
-                  <button className="orange-btn small" onClick={toggle2FA}>
-                    {user.twoFA ? 'Desactivar' : 'Activar'}
-                  </button>
-                </div>
               </div>
             </section>
 
-            <section className="section">
-              <h2>Preferencias de aplicación</h2>
-              <div className="section-box column">
-                <div className="row">
-                  <span>Tema</span>
-                  <button className="selector-btn" onClick={() => handlePref('theme', prefs.theme === 'Oscuro' ? 'Claro' : 'Oscuro')}>
-                    {prefs.theme} ▸
-                  </button>
-                </div>
-                <div className="row">
-                  <span>Idioma</span>
-                  <button className="selector-btn" onClick={() => handlePref('language', prefs.language === 'Español' ? 'English' : 'Español')}>
-                    {prefs.language} ▸
-                  </button>
-                </div>
-                <div className="row">
-                  <span>Moneda</span>
-                  <div className="currency-options">
-                    {['MXN','USD','EUR'].map(cur => (
-                      <button
-                        key={cur}
-                        className={`currency${prefs.currency === cur ? ' selected' : ''}`}
-                        onClick={() => handlePref('currency', cur)}
-                      >
-                        {cur}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </section>
+            
 
-            <section className="section">
-              <h2>Privacidad</h2>
-              <div className="section-box">
-                <span>🔘</span>
-              </div>
-            </section>
+           
           </main>
         </div>
       </div>
