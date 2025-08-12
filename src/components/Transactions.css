@@ -4,6 +4,7 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 2rem;
 }
 
 .nav-bar {
@@ -81,6 +82,7 @@
   box-shadow: 0 2px 12px rgba(255, 107, 0, 0.13);
   letter-spacing: 0.5px;
 }
+
 .add-button:hover {
   background: linear-gradient(90deg, #ff9800 0%, #ff6b00 100%);
 }
@@ -117,32 +119,67 @@
   font-weight: 600;
   color: #fff;
 }
+
 .transaction-name {
   font-weight: 700;
   color: #ff6b00;
   font-size: 1.08rem;
 }
+
 .transaction-date {
   color: #36cfff;
   font-size: 1rem;
 }
+
 .transaction-amount {
   font-weight: 700;
   font-size: 1.08rem;
   text-align: right;
 }
+
 .transaction-amount.income {
   color: #00e676;
-  font-weight: 700;
 }
+
 .transaction-amount.expense {
   color: #ff3c7e;
+}
+
+.table-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th, table td {
+  padding: 12px;
+  text-align: center;
+  border: 1px solid #ddd;
+}
+
+table th {
+  background-color: #ff6b00; /* Fondo anaranjado */
+  color: #fff; /* Texto blanco */
+  font-weight: 700;
+}
+
+h3 {
+  margin-bottom: 10px;
+  font-size: 1.5rem;
 }
 
 @media (max-width: 900px) {
   .main-section, .transaction-table-card {
     max-width: 98vw;
   }
+
   .transaction-row {
     padding: 12px 10px;
   }
@@ -155,16 +192,19 @@
     margin: 0;
     padding: 0;
   }
+
   .header-row h1 {
     font-size: 1.5rem;
   }
+
   .add-button {
     font-size: 1rem;
     padding: 10px 16px;
   }
+
   .transaction-row {
     font-size: 0.95rem;
     padding: 10px 4px;
     grid-template-columns: 1.5fr 1fr 1fr;
   }
-} 
+}
