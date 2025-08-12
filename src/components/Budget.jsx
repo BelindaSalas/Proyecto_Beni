@@ -112,7 +112,7 @@ const Budget = ({ user }) => {
   const budget = sumaIngresos - sumaGastos;
 
   // Suma de lo apartado de todas las metas
-  const totalApartado = goals.reduce((sum, g) => sum + (g.saved || 0), 0);
+  const totalApartado = goals.reduce((sum, g) => sum + (g.saved || 0), 0); // Aquí calculamos el ahorro total
   const presupuestoDisponible = budget - totalApartado;
 
   // Progreso de presupuesto
@@ -127,6 +127,7 @@ const Budget = ({ user }) => {
         </div>
         <div className="main-card">
           <h2 className="budget-subtitle">Ahorro total acumulado:</h2>
+          {/* Muestra el total ahorrado acumulado */}
           <div className="budget-amount">${totalApartado}</div>
           <div className="budget-progress-bar-bg">
             <div
@@ -215,6 +216,7 @@ const Budget = ({ user }) => {
           </div>
         </div>
       </div>
+
       {/* Modal apartado/meta */}
       <Modal isOpen={goalModalOpen} onClose={closeGoalModal} title={editGoalIdx !== null ? "Editar apartado/meta" : "Nuevo apartado/meta"}>
         <form onSubmit={handleGoalSubmit} className="modal-form">

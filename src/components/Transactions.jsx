@@ -186,11 +186,11 @@ const Transactions = ({ user }) => {
     if (!grouped[date]) grouped[date] = { date, Ingresos: 0, Gastos: 0, descripcion: '' };
     if (tx.type === 'income') {
       grouped[date].Ingresos += amt;
-      grouped[date].descripcion = tx.name; // Guardar la descripción en el grupo
+      grouped[date].descripcion = tx.name;
     }
     if (tx.type === 'expense') {
       grouped[date].Gastos += Math.abs(amt);
-      grouped[date].descripcion = tx.name; // Guardar la descripción en el grupo
+      grouped[date].descripcion = tx.name;
     }
   });
 
@@ -204,12 +204,12 @@ const Transactions = ({ user }) => {
 
   const getMonthColor = (month) => {
     const colors = [
-      '#FFEB3B', '#03A9F4', '#4CAF50', '#FF5722', '#9C27B0', '#FF9800', '#795548', '#3F51B5', '#009688', '#E91E63', '#00BCD4', '#FF4081'
+      '#5e3b07ff', '#03A9F4', '#4CAF50', '#FF5722', '#9C27B0', '#FF9800', '#795548', '#3F51B5', '#009688', '#E91E63', '#00BCD4', '#FF4081'
     ];
     return colors[month];
   };
 
-  // Cálculo de porcentaje de gasto
+  // Cálculo de totales
   const totalIngresos = saldoMensual.reduce((acc, curr) => acc + curr.Ingresos, 0);
   const totalGastos = saldoMensual.reduce((acc, curr) => acc + curr.Gastos, 0);
   const porcentajeGasto = totalIngresos === 0 ? 0 : (totalGastos / totalIngresos) * 100;
@@ -219,7 +219,7 @@ const Transactions = ({ user }) => {
       <h1>Ingresos y Gastos</h1>
       <button onClick={openModal}>Añadir</button>
       <div className="transaction-table-card" style={{ padding: '2rem', minHeight: 400, marginBottom: '2rem' }}>
-        <ResponsiveContainer width="100%" height={350}>
+        <ResponsiveContainer width="90%" height={400}>
           <LineChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" stroke="#444" />
             <XAxis dataKey="date" stroke="#fff" />
@@ -264,7 +264,10 @@ const Transactions = ({ user }) => {
 
       <div style={{ marginTop: '30px' }}>
         <h3>Distribución de Ingresos y Gastos</h3>
+        
         <ResponsiveContainerPie width="100%" height={200}>
+      
+        
           <PieChart>
             <Pie
               data={[
@@ -284,7 +287,18 @@ const Transactions = ({ user }) => {
             </Pie>
           </PieChart>
         </ResponsiveContainerPie>
-        <p>Total Gasto: {totalGastos} | Total Disponible: {totalIngresos - totalGastos}</p>
+
+        {/* Chips/Badges con colores de la gráfica */}
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '12px', marginTop: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#00E676', color: '#fff', padding: '8px 12px', borderRadius: 12, fontWeight: 700 }}>
+            <span>Ingresos Disponibles</span>
+            
+          </div>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: '#FF3C7E', color: '#fff', padding: '8px 12px', borderRadius: 12, fontWeight: 700 }}>
+            <span>Total Gastos</span>
+           
+          </div>
+        </div>
       </div>
 
       <Modal isOpen={modalOpen} onClose={closeModal} title="Añadir ingreso">
